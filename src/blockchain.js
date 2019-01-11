@@ -11,7 +11,7 @@ class Block {
   }
   calculateHash() {
     return SHA256(
-      this.index +
+        this.index +
         this.timestamp +
         this.previousHash +
         JSON.stringify(this.data)
@@ -27,10 +27,6 @@ class Chain {
   }
   // Setup a database by default array with genesis block.
   setupDatabase = () => {
-    // const adapter = new FileSync("database.json");
-    // const db = low(adapter);
-    // db.defaults({ chain: [this.createGenesisBlock()], settings: {} }).write();
-    // return db;
     const db = new Datastore({ filename: "blockchain.db", autoload: true });
     db.find({}, (err, docs) => {
       if (!err && docs.length == 0) {
@@ -39,14 +35,15 @@ class Chain {
     });
     return db;
   };
-  createGenesisBlock = () =>
-    new Block(0, Date.now(), "0", { name: "Genesis Block" });
-  // getLatestBlock = () => this.latestBlock;
+  createGenesisBlock = () => new Block(0, Date.now(), "0", { name: "Genesis Block" });
+  getLatestBlock = () => this.latestBlock;
   getBlockChain = () => {
     this.db.find({}, (err, docs) => {
       if (!err) {
         return err;
       }
+      console.log("zaaa xd");
+      console.log(docs);
       return docs;
     });
   };

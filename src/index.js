@@ -7,8 +7,8 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoUtil = require('./util/mongo');
 
-// import blockchain from "./blockchain";
-// const orionChain = new blockchain.Chain();
+import blockchain from "./blockchain";
+const orionChain = new blockchain.Chain();
 
 const app = express();
 
@@ -23,7 +23,7 @@ mongoUtil.connectToServer(function(err) {
 });
 
 app.get('/', function(req, response) {
-	response.json({"project":"Orion8", "status": "alive"})
+	response.json({"latest": orionChain.getLatestBlock()})
 });
 
 const port = process.env.PORT || 5000;
