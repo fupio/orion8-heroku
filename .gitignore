@@ -3,6 +3,9 @@
 
 dist/
 
+# Blockchain
+blockchain.db
+
 # OSX
 #
 .DS_Store
