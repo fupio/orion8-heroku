@@ -45,7 +45,7 @@ class ClientServer {
     ws.on("message", data => {
       try {
         const message = JSON.parse(data);
-        console(`Received message: ${JSON.stringify(message)}`);
+        console.log(`Received message: ${JSON.stringify(message)}`);
         switch (message.type) {
           case "get_blockchain": {
             ws.send(JSON.stringify(this.responseChainMsg()));
@@ -110,18 +110,18 @@ class ClientServer {
             break;
           }
           case "load_feeds": {
-            console("TODO: load_feeds here");
+            console.log("TODO: load_feeds here");
             break;
           }
           default:
-            console("PONG !");
+            console.log("PONG !");
             // this.ship(ws, { type: "pong" });
             ws.send(JSON.stringify({ type: "pong" }));
             break;
         }
       } catch (error) {
-        console(error);
-        console("parsing error");
+        console.log(error);
+        console.log("parsing error");
       }
     });
   };
