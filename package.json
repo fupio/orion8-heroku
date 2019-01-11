@@ -10,10 +10,10 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"server": "nodemon dist/index.js --exec babel-node",
 		"heroku-postbuild": "npm install",
-		"start": "babel-node --presets es2015 index.js",
+		"start": "npm run build && babel-node dist/",
 		"watch": "babel -w src/ -d dist/",
 		"build": "babel src/ -d dist/",
-		"serve": "babel -w src/ -d dist/ | nodemon --watch dist"
+		"serve": "npm run watch && nodemon --watch dist"
 	},
 	"license": "MIT",
 	"repository": "fupio/orion8",
