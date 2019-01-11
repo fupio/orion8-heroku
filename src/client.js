@@ -10,9 +10,9 @@ class ClientServer {
     // [client id] = {client}
     this.clients = new Map();
   }
-  startServer(port) {
-    const server = new WebSocket.Server({ port });
-    server.on("connection", (ws, req) => this.initConnection(ws, req));
+  startServer(server) {
+    const wss = new WebSocket.Server({ server: server });
+    wss.on("connection", (ws, req) => this.initConnection(ws, req));
   }
   initConnection = (ws, req) => {
     const parameters = UrlParser(req.url, true);
@@ -45,7 +45,7 @@ class ClientServer {
     ws.on("message", data => {
       try {
         const message = JSON.parse(data);
-        console.log(`Received message: ${JSON.stringify(message)}`);
+        console(`Received message: ${JSON.stringify(message)}`);
         switch (message.type) {
           case "get_blockchain": {
             ws.send(JSON.stringify(this.responseChainMsg()));
@@ -110,18 +110,18 @@ class ClientServer {
             break;
           }
           case "load_feeds": {
-            console.log("TODO: load_feeds here");
+            console("TODO: load_feeds here");
             break;
           }
           default:
-            console.log("PONG !");
+            console("PONG !");
             // this.ship(ws, { type: "pong" });
             ws.send(JSON.stringify({ type: "pong" }));
             break;
         }
       } catch (error) {
-        console.log(error);
-        console.log("parsing error");
+        console(error);
+        console("parsing error");
       }
     });
   };

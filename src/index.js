@@ -12,10 +12,6 @@ import ClientServer from "./client";
 
 const orionChain = new blockchain.Chain();
 
-const clientWebsocketServer = new ClientServer(orionChain);
-clientWebsocketServer.startServer(38746);
-console.log(`listening client ws server port on: 38746`);
-
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -38,3 +34,8 @@ app.set('port', port);
 const server = http.createServer(app);
 
 server.listen(port, () => console.log(`API running on localhost:${port}`));
+
+
+const clientWebsocketServer = new ClientServer(orionChain);
+clientWebsocketServer.startServer(server);
+console.log(`listening client ws server port on: 38746`);
