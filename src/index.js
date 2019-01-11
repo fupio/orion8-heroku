@@ -7,6 +7,9 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoUtil = require('./util/mongo');
 
+// import blockchain from "./blockchain";
+// const orionChain = new blockchain.Chain();
+
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));

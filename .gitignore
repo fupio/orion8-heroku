@@ -1,6 +1,8 @@
 #Jay
 .env
 
+dist/
+
 # OSX
 #
 .DS_Store
