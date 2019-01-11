@@ -8,7 +8,13 @@ const bodyParser = require('body-parser');
 const mongoUtil = require('./util/mongo');
 
 import blockchain from "./blockchain";
+import ClientServer from "./client";
+
 const orionChain = new blockchain.Chain();
+
+const clientWebsocketServer = new ClientServer(orionChain);
+clientWebsocketServer.startServer(38746);
+console.log(`listening client ws server port on: 38746`);
 
 const app = express();
 
