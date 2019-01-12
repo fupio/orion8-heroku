@@ -25,7 +25,7 @@ mongoUtil.connectToServer(function(err) {
 });
 
 app.get('/', function(req, response) {
-	response.json({"latest": orionChain.getLatestBlock()})
+	response.json(orionChain.getLatestBlock())
 });
 
 const port = process.env.PORT || 5000;
