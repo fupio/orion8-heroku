@@ -6,21 +6,21 @@ import cors from "cors";
 import blockchain from "./blockchain";
 import ClientServer from "./client";
 
-// import mongoUtil from "./util/mongo";
-
 // // Connect to the backup db server
+// import mongoUtil from "./util/mongo";
 // mongoUtil.connectToServer((err) => err && console.log(err));
 
 // init blockchain
 const orionChain = new blockchain.Chain();
 
+// init express app
+const app = express();
+
 // create a server using for ws and rest
 const server = http.createServer(app);
 
-// init express app
-const app = express();
 app.use(cors());
-app.get('/', (_req, response) => response.json(orionChain.getLatestBlock()));
+app.get('/', (_req, response) => response.json(orionChain.getLatestBlock()))
 
 const port = process.env.PORT || 5000;
 server.listen(port)
