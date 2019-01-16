@@ -6,10 +6,10 @@ import cors from "cors";
 import blockchain from "./blockchain";
 import ClientServer from "./client";
 
-import mongoUtil from "./util/mongo";
+// import mongoUtil from "./util/mongo";
 
-// Connect to the backup db server
-mongoUtil.connectToServer((err) => err && console.log(err));
+// // Connect to the backup db server
+// mongoUtil.connectToServer((err) => err && console.log(err));
 
 // init blockchain
 const orionChain = new blockchain.Chain();
