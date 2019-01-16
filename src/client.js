@@ -17,28 +17,31 @@ class ClientServer {
   initConnection = (ws, req) => {
     const parameters = UrlParser(req.url, true);
     const decodedToken = decodeToken(parameters.query.token);
-    const publicKey = decodedToken.payload.iss;
-    const pieces = publicKey.split(":");
-    if (pieces.length > 1) {
-      const client = {
-        // id: req.headers['sec-websocket-key'],
-        id: pieces[pieces.length - 1],
-        blockstack: pieces[pieces.length - 1],
-        isAuthenticated: true,
-        protocolVersion: 1,
-        connection: ws
-      };
-      if (!this.subscriptions.has(client.id)) {
-        this.subscriptions.set(client.id, new Set());
+    
+    if (decodedToken) {
+      const publicKey = decodedToken.payload.iss;
+      const pieces = publicKey.split(":");
+      if (pieces.length > 1) {
+        const client = {
+          // id: req.headers['sec-websocket-key'],
+          id: pieces[pieces.length - 1],
+          blockstack: pieces[pieces.length - 1],
+          isAuthenticated: true,
+          protocolVersion: 1,
+          connection: ws
+        };
+        if (!this.subscriptions.has(client.id)) {
+          this.subscriptions.set(client.id, new Set());
+        }
+        this.subscriptions.get(client.id).add(client.id);
+        this.clients.set(client.id, client);
+  
+        this.initMessageHandler(ws, client);
+        this.initErrorHandler(ws, client);
       }
-      this.subscriptions.get(client.id).add(client.id);
-      this.clients.set(client.id, client);
-
-      this.initMessageHandler(ws, client);
-      this.initErrorHandler(ws, client);
-    }
-    else {
-      throw new Error("Code smells. We want public key with the :");
+      else {
+        throw new Error("Code smells. We want public key with the :");
+      }
     }
   };
   unique = x => [...new Set(x)];

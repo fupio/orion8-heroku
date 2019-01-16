@@ -11,8 +11,8 @@
 		"server": "nodemon dist/index.js --exec babel-node",
 		"heroku-postbuild": "npm install",
 		"start": "npm run build && babel-node dist/",
-		"watch": "babel -w src/ -d dist/",
 		"build": "babel src/ -d dist/",
+		"watch": "babel -w src/ -d dist/",
 		"serve": "babel -w src/ -d dist/ | nodemon --watch dist"
 	},
 	"license": "MIT",
