@@ -118,8 +118,6 @@ class ClientServer {
             break;
           }
           default:
-            console.log("PONG !");
-            // this.ship(ws, { type: "pong" });
             ws.send(JSON.stringify({ type: "pong" }));
             break;
         }
