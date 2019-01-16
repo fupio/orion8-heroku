@@ -11,7 +11,7 @@ class ClientServer {
     this.clients = new Map();
   }
   startServer(server) {
-    const wss = new WebSocket.Server({ server: server });
+    const wss = new WebSocket.Server({ 'server': server });
     wss.on("connection", (ws, req) => this.initConnection(ws, req));
   }
   initConnection = (ws, req) => {
@@ -36,7 +36,8 @@ class ClientServer {
 
       this.initMessageHandler(ws, client);
       this.initErrorHandler(ws, client);
-    } else {
+    }
+    else {
       throw new Error("Code smells. We want public key with the :");
     }
   };
