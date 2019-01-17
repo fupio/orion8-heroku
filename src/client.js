@@ -56,9 +56,9 @@ class ClientServer {
             break;
           }
           case "init_pub_sub": {
-            const messageTags = this.unique(message.data.tags);
-            messageTags.map(tagRaw => {
-              const tag = tagRaw.toLowerCase().trim();
+            const messageTags = message.data.tags && this.unique(message.data.tags);
+            messageTags && messageTags.map(tagRaw => {
+              const tag = (typeof tagRaw === "string") && tagRaw.toLowerCase().trim();
               if (!this.subscriptions.has(tag)) {
                 this.subscriptions.set(tag, new Set());
               }
