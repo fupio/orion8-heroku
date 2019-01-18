@@ -10,7 +10,7 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"server": "nodemon dist/index.js --exec babel-node",
 		"heroku-postbuild": "npm install",
-		"deploy": "git push heroku master",
+		"deploy": "yarn build && git push heroku master",
 		"tail": "heroku logs --tail",
 		"start": "npm run build && babel-node dist/",
 		"build": "babel src/ -d dist/",
