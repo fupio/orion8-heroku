@@ -60,16 +60,15 @@ class ClientServer {
             if (!this.clients.has(client.id)) {
               this.clients.set(client.id, client);
             }
-            const messageTags = this.unique(message.data.tags);
-            messageTags.map(tagRaw => {
-              if (tagRaw) {
-                const tag = tagRaw.toLowerCase().trim();
-                if (!this.subscriptions.has(tag)) {
-                  this.subscriptions.set(tag, new Set());
+            const messageTags = message.data && this.unique(message.data.tags);
+            messageTags && messageTags.map(tagRaw => {
+                if (typeof tagRaw === "string"){
+                  const tag = tagRaw && tagRaw.toLowerCase().trim();
+                  if (!this.subscriptions.has(tag)) {
+                    this.subscriptions.set(tag, new Set());
+                  }
+                  this.subscriptions.get(tag).add(client.id);
                 }
-                this.subscriptions.get(tag).add(client.id);
-              }
-              
             });
             break;
           }
@@ -85,7 +84,6 @@ class ClientServer {
               updated: message.data.created
             };
             feed.tags.map(tagRaw => {
-              if (typeof tagRaw === String) {
                 const tag = tagRaw.toLowerCase().trim();
                 // set the tag if not.
                 if (!this.subscriptions.has(tag)) {
@@ -102,11 +100,11 @@ class ClientServer {
                       type: "feed_load_promise",
                       data: feed
                     });
-                  } else {
+                  }
+                  else {
                     console.log("code smells");
                   }
                 });
-              }
             });
 
             const feedKey = `${feed.created}-${feed.identity}`;
