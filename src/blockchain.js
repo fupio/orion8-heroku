@@ -50,6 +50,7 @@ class Chain {
     this.latestBlock = database.chain[database.chain.length -1];
     return true;
   };
+  getLatestBlock = () => this.latestBlock;
   getBlockChain = () => {
     const database = jsonfile.readFileSync(this.fileName);
     return database.chain;
