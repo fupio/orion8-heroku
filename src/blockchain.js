@@ -4,13 +4,14 @@ import jsonfile from "jsonfile";
 import redis from "redis";
 
 const client = redis.createClient(process.env.REDISCLOUD_URL)
-
-// client.on('connect', () => {
-//     console.log(`connected to redis`);
-// });
-// client.on('error', err => {
-//     console.log(`Error: ${err}`);
-// });
+// client.set("blockchain", "{}")
+// client.set("fupio", "{}")
+client.on('connect', () => {
+    console.log(`connected to redis`);
+});
+client.on('error', err => {
+    console.log(`Error: ${err}`);
+});
 
 // client.get('blockchain', (err, reply) => !err && console.log(reply.toString()))
 
@@ -51,10 +52,10 @@ class Chain {
         console.error("lokal dosya yok")
         // check the redis first because heroku local file 
         // might be gone if dyno sleeping.
-        client.get('blockchain', (err, reply) => {
+        client.get('fupio', (err, reply) => {
           if (err) {
             console.error("hata var, rediste de bişey yok", err)
-            client.set('blockchain', JSON.stringify(database.chain))
+            client.set('fupio', JSON.stringify(database.chain))
             jsonfile.writeFileSync(this.fileName, schema)
             return schema.chain[0]
           }
@@ -75,7 +76,7 @@ class Chain {
     database.chain.push(newBlock);
     jsonfile.writeFileSync(this.fileName, database);
     this.latestBlock = database.chain[database.chain.length -1];
-    client.set("blockchain", JSON.stringify(database.chain));
+    client.set("fupio", JSON.stringify(database.chain));
     return true;
   };
   getLatestBlock = () => this.latestBlock;
