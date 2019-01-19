@@ -1,5 +1,18 @@
+require('dotenv').config();
 import SHA256 from "crypto-js/sha256";
 import jsonfile from "jsonfile";
+import redis from "redis";
+
+const client = redis.createClient(process.env.REDISCLOUD_URL)
+
+// client.on('connect', () => {
+//     console.log(`connected to redis`);
+// });
+// client.on('error', err => {
+//     console.log(`Error: ${err}`);
+// });
+
+// client.get('blockchain', (err, reply) => !err && console.log(reply.toString()))
 
 class Block {
   constructor(index, timestamp, previousHash, data) {
@@ -12,9 +25,9 @@ class Block {
   calculateHash = () => {
     return SHA256(
       this.index +
-        this.timestamp +
-        this.previousHash +
-        JSON.stringify(this.data)
+      this.timestamp +
+      this.previousHash +
+      JSON.stringify(this.data)
     ).toString();
   }
 }
@@ -23,6 +36,7 @@ class Chain {
   constructor() {
     this.fileName = "blockchain.db";
     this.latestBlock = this.setupDatabase();
+    //this.client = redis.createClient(process.env.REDISCLOUD_URL);
   }
   setupDatabase = () => {
     const schema = {
@@ -34,9 +48,22 @@ class Chain {
       return database.chain[database.chain.length - 1];
     } catch (error) {
       if (error.errno == -2) {
-        jsonfile.writeFileSync(this.fileName, schema);
+        console.error("lokal dosya yok")
+        // check the redis first because heroku local file 
+        // might be gone if dyno sleeping.
+        client.get('blockchain', (err, reply) => {
+          if (err) {
+            console.error("hata var, rediste de bişey yok", err)
+            client.set('blockchain', JSON.stringify(database.chain))
+            jsonfile.writeFileSync(this.fileName, schema)
+            return schema.chain[0]
+          }
+          const replyChain = JSON.parse(reply)
+          jsonfile.writeFileSync(this.fileName, {chain: replyChain})
+          return replyChain[0]
+        })
       }
-      return schema.chain[0];
+      
     }
   }
   createBlock = (index, timestamp, previousHash, data) => {
@@ -48,6 +75,7 @@ class Chain {
     database.chain.push(newBlock);
     jsonfile.writeFileSync(this.fileName, database);
     this.latestBlock = database.chain[database.chain.length -1];
+    client.set("blockchain", JSON.stringify(database.chain));
     return true;
   };
   getLatestBlock = () => this.latestBlock;

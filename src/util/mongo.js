@@ -1,6 +1,11 @@
-var mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 var db;
+
+var Schema = mongoose.Schema;
+var blockchainSchema = new Schema({blockchain: String});
+var Blockchain = mongoose.model("Blockchain", blockchainSchema);
+
 module.exports = {
 	connectToServer: function(callback) {
 		var mongoDB = process.env.MLAB_CONNECTION;
