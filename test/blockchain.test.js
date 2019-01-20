@@ -5,32 +5,32 @@ describe("Test Chain", () => {
 
   it("chain valid", () => {
     expect(testChain).toBeDefined();
-    expect(testChain.isChainValid()).toBe(true);
+    //expect(testChain.isChainValid()).toBe(true);
   });
 
-//   it("genesis block index must be 0", () => {
-//     expect(testChain).toBeDefined();
-//     expect(testChain.createGenesisBlock().index).toBe(0);
-//   });
+  it("genesis block index must be 0", () => {
+    expect(testChain).toBeDefined();
+    expect(testChain.createGenesisBlock().index).toBe(0);
+  });
 
-//   it('genesis block data must be equal to "Genesis Block"', () => {
-//     expect(testChain).toBeDefined();
-//     expect(testChain.createGenesisBlock().data).toBe("Genesis Block");
-//   });
+  it('genesis block data must be equal to "Genesis Block"', () => {
+    expect(testChain).toBeDefined();
+    expect(testChain.createGenesisBlock().data).toBe("Genesis Block");
+  });
 
-//   it('genesis block previousHash must be equal to "0"', () => {
-//     expect(testChain).toBeDefined();
-//     expect(testChain.createGenesisBlock().previousHash).toBe("0");
-//   });
+  it('genesis block previousHash must be equal to "0"', () => {
+    expect(testChain).toBeDefined();
+    expect(testChain.createGenesisBlock().previousHash).toBe("0");
+  });
 
-//   it("genesis block hash must be 64 char", () => {
-//     expect(testChain).toBeDefined();
-//     expect(testChain.createGenesisBlock().hash.length).toBe(64);
-//   });
+  it("genesis block hash must be 64 char", () => {
+    expect(testChain).toBeDefined();
+    expect(testChain.createGenesisBlock().hash.length).toBe(64);
+  });
 
-//   it("only with genesis, blocks count must be 1", () => {
-//     expect(testChain.chain.length).toBe(1);
-//   });
+  // it("only with genesis, blocks count must be 1", () => {
+  //   expect(testChain.chain.length).toBe(1);
+  // });
 
 //   it("first block must be added", () => {
 //     const block1 = new blockchain.Block(
