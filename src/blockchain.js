@@ -1,18 +1,7 @@
 require('dotenv').config();
 import SHA256 from "crypto-js/sha256";
 import jsonfile from "jsonfile";
-import redis from "redis";
-
-const client = redis.createClient(process.env.REDISCLOUD_URL)
-// client.set("chain", "[]")
-// client.get('chain', (err, reply) => !err && console.log(reply.toString()))
-
-client.on('connect', () => {
-    console.log(`connected to redis`);
-});
-client.on('error', err => {
-    console.log(`Error: ${err}`);
-});
+import fs from "fs";
 
 class Block {
   constructor(index, timestamp, previousHash, data) {
@@ -33,41 +22,56 @@ class Block {
 }
 
 class Chain {
-  constructor() {
+  constructor(redisProp) {
     this.fileName = "blockchain.db";
+    this.ram = redisProp;
     this.latestBlock = this.setupDatabase();
   }
   setupDatabase = () => {
-    const schema = {
-      chain: [this.createGenesisBlock()],
-      cache: {}
-    };
-    try {
+    const schema = {chain: [this.createGenesisBlock()]};
+
+    if (fs.existsSync(this.fileName)) {
       const database = jsonfile.readFileSync(this.fileName);
-      if (database.chain.length){
-        return database.chain[database.chain.length - 1];
-      }
-      else {
-        return []
-      }
+      return database.chain[database.chain.length - 1];
     }
-    catch (error) {
-      if (error.errno == -2) {
-        // check the redis first because heroku local file 
-        // might be gone if dyno sleeping.
-        client.get("chain", (err, reply) => {
-          if (err) {
-            client.set("chain", JSON.stringify(schema))
-            jsonfile.writeFileSync(this.fileName, schema)
-            return schema.chain[0]
-          }
-          const replyObject = JSON.parse(reply)
-          jsonfile.writeFileSync(this.fileName, {chain: replyObject.chain})
-          return replyObject.chain[0];
-        })
-      }
-      
+    else {
+      jsonfile.writeFileSync(this.fileName, schema)
+      this.ram.set("chain", JSON.stringify(schema.chain))
+      return schema.chain[0]
     }
+
+    // return this.ram.get("chain", (err, reply) => {
+    //   if (err || reply == null) {
+    //     this.ram.set("chain", JSON.stringify(schema.chain))
+    //     return schema.chain[0]
+    //   }
+    //   const replyObject = JSON.parse(reply)
+    //   console.log(replyObject)
+    //   return replyObject.chain[replyObject.chain.length - 1]
+    // })
+
+
+
+
+    
+    // if (fs.existsSync(this.fileName)) {
+    //   const database = jsonfile.readFileSync(this.fileName);
+    //   console.log(database)
+    //   return database.chain[database.chain.length - 1];
+    // }
+    // else{
+    //   this.ram.get("chain", (err, reply) => {
+    //     if (err) {
+    //       this.ram.set("chain", JSON.stringify(schema.chain))
+    //       jsonfile.writeFileSync(this.fileName, schema)
+    //       return schema.chain[0]
+    //     }
+    //     const replyObject = JSON.parse(reply)
+    //     console.log("replyObject", replyObject)
+    //     jsonfile.writeFileSync(this.fileName, replyObject)
+    //     return replyObject.chain[replyObject.chain.length - 1]
+    //   })
+    // }
   }
   createBlock = (index, timestamp, previousHash, data) => {
     return new Block(index, timestamp, previousHash, data);
@@ -78,8 +82,7 @@ class Chain {
     database.chain.push(newBlock);
     jsonfile.writeFileSync(this.fileName, database);
     this.latestBlock = database.chain[database.chain.length -1];
-
-    client.set("chain", JSON.stringify(database.chain));
+    this.ram.set("chain", JSON.stringify(database.chain))
     return true;
   };
   getLatestBlock = () => this.latestBlock;
@@ -95,6 +98,9 @@ class Chain {
   };
   isChainValid() {
     const database = jsonfile.readFileSync(this.fileName);
+    if (!database) {
+      return false;
+    }
     for (let i = 1; i < database.chain.length; i += 1) {
       const currentBlock = this.createBlock(
         database.chain[i].index,

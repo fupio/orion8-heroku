@@ -157,7 +157,7 @@ class ClientServer {
             const sentFeedIDs = [];
             const askedTags = message.data.tags;
             const chain = this.blockchain.getBlockChain();
-            chain.map(block => {
+            chain && chain.map(block => {
               if (block.data.hasOwnProperty("tags") && block.index !== 0) {
                 block.data.tags.map(blockTag => {
                   askedTags.map(askedTag => {
@@ -185,7 +185,7 @@ class ClientServer {
             // chain'i tekrar tarayıp onların datalarını pass et.
             const sentComment = [];
             const subscription = this.clients.get(client.id);
-            chain.map(block => {
+            chain && chain.map(block => {
               sentFeedIDs.map(sentFeedId => {
                 if (block.data.type == "comment" && block.data.feedId == sentFeedId) {
                   const commentID = `${block.data.feedId}-${block.data.created}`;
@@ -213,7 +213,6 @@ class ClientServer {
   };
   mineBlock = block => {
     let blockIsMined = false;
-    let i = 0;
     do {
       const nextBlock = this.blockchain.generateNextBlock(block);
       // console.log("mineBlock in nextBlock", nextBlock, "\n****");
@@ -221,8 +220,7 @@ class ClientServer {
       if (blockIsMined) {
         break;
       }
-      i++;
-    } while (i < 10);
+    } while (true);
   };
   initErrorHandler = (ws, client) => {
     ws.on("close", () => this.closeConnection(ws, client));
