@@ -213,13 +213,16 @@ class ClientServer {
   };
   mineBlock = block => {
     let blockIsMined = false;
+    let i = 0;
     do {
       const nextBlock = this.blockchain.generateNextBlock(block);
+      // console.log("mineBlock in nextBlock", nextBlock, "\n****");
       blockIsMined = this.blockchain.addBlock(nextBlock);
       if (blockIsMined) {
         break;
       }
-    } while (true);
+      i++;
+    } while (i < 10);
   };
   initErrorHandler = (ws, client) => {
     ws.on("close", () => this.closeConnection(ws, client));

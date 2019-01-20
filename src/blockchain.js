@@ -4,9 +4,8 @@ import jsonfile from "jsonfile";
 import redis from "redis";
 
 const client = redis.createClient(process.env.REDISCLOUD_URL)
-// client.set("blockchain", "{}")
-// client.set("fupio", "{}")
-// client.get('blockchain', (err, reply) => !err && console.log(reply.toString()))
+// client.set("chain", "[]")
+// client.get('chain', (err, reply) => !err && console.log(reply.toString()))
 
 client.on('connect', () => {
     console.log(`connected to redis`);
@@ -45,21 +44,26 @@ class Chain {
     };
     try {
       const database = jsonfile.readFileSync(this.fileName);
-      return database.chain[database.chain.length - 1];
-    } catch (error) {
+      if (database.chain.length){
+        return database.chain[database.chain.length - 1];
+      }
+      else {
+        return []
+      }
+    }
+    catch (error) {
       if (error.errno == -2) {
         // check the redis first because heroku local file 
         // might be gone if dyno sleeping.
-        client.get('fupio', (err, reply) => {
+        client.get("chain", (err, reply) => {
           if (err) {
-            console.error("there is no data on redis", err)
-            client.set('fupio', JSON.stringify(database.chain))
+            client.set("chain", JSON.stringify(schema))
             jsonfile.writeFileSync(this.fileName, schema)
             return schema.chain[0]
           }
-          const replyChain = JSON.parse(reply)
-          jsonfile.writeFileSync(this.fileName, {chain: replyChain})
-          return replyChain[0]
+          const replyObject = JSON.parse(reply)
+          jsonfile.writeFileSync(this.fileName, {chain: replyObject.chain})
+          return replyObject.chain[0];
         })
       }
       
@@ -74,7 +78,8 @@ class Chain {
     database.chain.push(newBlock);
     jsonfile.writeFileSync(this.fileName, database);
     this.latestBlock = database.chain[database.chain.length -1];
-    client.set("fupio", JSON.stringify(database.chain));
+
+    client.set("chain", JSON.stringify(database.chain));
     return true;
   };
   getLatestBlock = () => this.latestBlock;
