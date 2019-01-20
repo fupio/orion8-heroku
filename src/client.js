@@ -2,7 +2,6 @@ import WebSocket from "ws";
 import UrlParser from "url-parse";
 import { decodeToken, TokenVerifier } from "jsontokens";
 
-
 class ClientServer {
   constructor(blockchainInstance) {
     this.blockchain = blockchainInstance;

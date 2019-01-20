@@ -6,14 +6,14 @@ import redis from "redis";
 const client = redis.createClient(process.env.REDISCLOUD_URL)
 // client.set("blockchain", "{}")
 // client.set("fupio", "{}")
+// client.get('blockchain', (err, reply) => !err && console.log(reply.toString()))
+
 client.on('connect', () => {
     console.log(`connected to redis`);
 });
 client.on('error', err => {
     console.log(`Error: ${err}`);
 });
-
-// client.get('blockchain', (err, reply) => !err && console.log(reply.toString()))
 
 class Block {
   constructor(index, timestamp, previousHash, data) {
@@ -37,7 +37,6 @@ class Chain {
   constructor() {
     this.fileName = "blockchain.db";
     this.latestBlock = this.setupDatabase();
-    //this.client = redis.createClient(process.env.REDISCLOUD_URL);
   }
   setupDatabase = () => {
     const schema = {
@@ -49,12 +48,11 @@ class Chain {
       return database.chain[database.chain.length - 1];
     } catch (error) {
       if (error.errno == -2) {
-        console.error("lokal dosya yok")
         // check the redis first because heroku local file 
         // might be gone if dyno sleeping.
         client.get('fupio', (err, reply) => {
           if (err) {
-            console.error("hata var, rediste de bişey yok", err)
+            console.error("there is no data on redis", err)
             client.set('fupio', JSON.stringify(database.chain))
             jsonfile.writeFileSync(this.fileName, schema)
             return schema.chain[0]
