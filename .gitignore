@@ -1,6 +1,8 @@
 #Jay
 .env
 
+dist/
+
 # Blockchain
 blockchain.db
 
