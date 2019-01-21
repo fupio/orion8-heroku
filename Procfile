@@ -1,1 +1,1 @@
-web: npm run kick
+web: npm run server
