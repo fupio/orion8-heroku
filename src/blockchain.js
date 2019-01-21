@@ -35,14 +35,18 @@ class Chain {
     }
     else {
       return this.ram.get("chain", (err, reply) => {
-        if (err || reply === undefined || reply == null) {
+        if (err || reply === undefined || reply == null || reply == "") {
           const schema = {chain: [this.createGenesisBlock()]};
           jsonfile.writeFileSync(this.fileName, schema);
           this.ram.set("chain", JSON.stringify(schema));
+          console.log("no local chain, creating one..")
+          console.log("schema", schema)
           return schema.chain[0];
         }
         const response = JSON.parse(reply);
         jsonfile.writeFileSync(this.fileName, response);
+        console.log("go the chain on the ram")
+        console.log("response", response)
         return response.chain[0]
       })
     }
