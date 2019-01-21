@@ -12,7 +12,7 @@ const ram = redis.createClient(process.env.REDISCLOUD_URL)
 
 ram.on('connect', () => {
     // ram.del('chain')
-    ram.get('chain', (err, reply) => !err && console.log(reply))
+    
     // init blockchain
     const orionChain = new blockchain.Chain(ram);
 

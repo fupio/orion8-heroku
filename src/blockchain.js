@@ -28,50 +28,24 @@ class Chain {
     this.latestBlock = this.setupDatabase();
   }
   setupDatabase = () => {
-    const schema = {chain: [this.createGenesisBlock()]};
-
     if (fs.existsSync(this.fileName)) {
       const database = jsonfile.readFileSync(this.fileName);
+      this.ram.set("chain", JSON.stringify(database));
       return database.chain[database.chain.length - 1];
     }
     else {
-      jsonfile.writeFileSync(this.fileName, schema)
-      this.ram.set("chain", JSON.stringify(schema.chain))
-      return schema.chain[0]
+      return this.ram.get("chain", (err, reply) => {
+        if (err) {
+          const schema = {chain: [this.createGenesisBlock()]};
+          jsonfile.writeFileSync(this.fileName, schema);
+          this.ram.set("chain", JSON.stringify(schema));
+          return schema.chain[0];
+        }
+        const response = JSON.parse(reply);
+        jsonfile.writeFileSync(this.fileName, response);
+        return response.chain[0]
+      })
     }
-
-    // return this.ram.get("chain", (err, reply) => {
-    //   if (err || reply == null) {
-    //     this.ram.set("chain", JSON.stringify(schema.chain))
-    //     return schema.chain[0]
-    //   }
-    //   const replyObject = JSON.parse(reply)
-    //   console.log(replyObject)
-    //   return replyObject.chain[replyObject.chain.length - 1]
-    // })
-
-
-
-
-    
-    // if (fs.existsSync(this.fileName)) {
-    //   const database = jsonfile.readFileSync(this.fileName);
-    //   console.log(database)
-    //   return database.chain[database.chain.length - 1];
-    // }
-    // else{
-    //   this.ram.get("chain", (err, reply) => {
-    //     if (err) {
-    //       this.ram.set("chain", JSON.stringify(schema.chain))
-    //       jsonfile.writeFileSync(this.fileName, schema)
-    //       return schema.chain[0]
-    //     }
-    //     const replyObject = JSON.parse(reply)
-    //     console.log("replyObject", replyObject)
-    //     jsonfile.writeFileSync(this.fileName, replyObject)
-    //     return replyObject.chain[replyObject.chain.length - 1]
-    //   })
-    // }
   }
   createBlock = (index, timestamp, previousHash, data) => {
     return new Block(index, timestamp, previousHash, data);
@@ -79,11 +53,18 @@ class Chain {
   createGenesisBlock = () => this.createBlock(0, Date.now(), "0", "Genesis Block");
   addBlock = (newBlock) => {
     const database = jsonfile.readFileSync(this.fileName);
-    database.chain.push(newBlock);
-    jsonfile.writeFileSync(this.fileName, database);
-    this.latestBlock = database.chain[database.chain.length -1];
-    this.ram.set("chain", JSON.stringify(database.chain))
-    return true;
+    if (database && database.hasOwnProperty('chain')) {
+      console.log("database.chain", database.chain)
+      database.chain.push(newBlock);
+      this.latestBlock = database.chain[database.chain.length -1];
+      jsonfile.writeFileSync(this.fileName, database);
+      this.ram.set("chain", JSON.stringify(database));
+      return true
+    }
+    else {
+      console.log("database", database)
+      return false;
+    }
   };
   getLatestBlock = () => this.latestBlock;
   getBlockChain = () => {
