@@ -3,11 +3,12 @@
 	"version": "1.0.1",
 	"description": "",
 	"engines": {
-		"node": "9.9.0"
+		"node": "10.x"
 	},
 	"main": "dist/index.js",
 	"scripts": {
 		"test": "jest",
+		"kick": "npm install && npm run build && node dist/",
 		"server": "npm run build && nodemon dist/index.js --exec babel-node",
 		"heroku-postbuild": "npm install",
 		"deploy": "npm run build && git push heroku master && npm run tail",

@@ -11,9 +11,6 @@ import ClientServer from "./client";
 const ram = redis.createClient(process.env.REDISCLOUD_URL)
 
 ram.on('connect', () => {
-    // ram.del('chain')
-    
-    // init blockchain
     const orionChain = new blockchain.Chain(ram);
 
     const app = express();
