@@ -53,13 +53,14 @@ var Chain = function () {
         return database.chain[database.chain.length - 1];
       } else {
         return _this2.ram.get("chain", function (err, reply) {
-          if (err) {
+          if (err || !reply) {
             var schema = { chain: [_this2.createGenesisBlock()] };
             _jsonfile2.default.writeFileSync(_this2.fileName, schema);
             _this2.ram.set("chain", JSON.stringify(schema));
             return schema.chain[0];
           }
           var response = JSON.parse(reply);
+          console.log("response", response);
           _jsonfile2.default.writeFileSync(_this2.fileName, response);
           return response.chain[0];
         });

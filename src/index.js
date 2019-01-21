@@ -12,7 +12,7 @@ const ram = redis.createClient(process.env.REDISCLOUD_URL)
 
 ram.on('connect', () => {
     const orionChain = new blockchain.Chain(ram);
-
+    
     const app = express();
     const server = http.createServer(app);
     app.use(cors());

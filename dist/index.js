@@ -31,6 +31,8 @@ require('dotenv').config();
 var ram = _redis2.default.createClient(process.env.REDISCLOUD_URL);
 
 ram.on('connect', function () {
+    ram.del("chain");
+
     var orionChain = new _blockchain2.default.Chain(ram);
 
     var app = (0, _express2.default)();
@@ -47,6 +49,7 @@ ram.on('connect', function () {
     clientWebsocketServer.startServer(server);
     console.log("listening client ws server port on: " + port);
 });
+
 ram.on('error', function (err) {
     console.log("Error: " + err);
 });
