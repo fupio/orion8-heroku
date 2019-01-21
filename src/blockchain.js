@@ -54,7 +54,6 @@ class Chain {
   addBlock = (newBlock) => {
     const database = jsonfile.readFileSync(this.fileName);
     if (database && database.hasOwnProperty('chain')) {
-      console.log("database.chain", database.chain)
       database.chain.push(newBlock);
       this.latestBlock = database.chain[database.chain.length -1];
       jsonfile.writeFileSync(this.fileName, database);

@@ -1,6 +1,6 @@
 {
 	"name": "orion8",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "",
 	"engines": {
 		"node": "9.9.0"
@@ -10,9 +10,9 @@
 		"test": "jest",
 		"server": "nodemon dist/index.js --exec babel-node",
 		"heroku-postbuild": "npm install",
-		"deploy": "yarn build && git push heroku master && yarn tail",
+		"deploy": "npm run build && git push heroku master && npm run tail",
 		"tail": "heroku logs --tail",
-		"start": "npm run build && babel-node dist/",
+		"start": "npm install && npm run build && babel-node dist/",
 		"build": "babel src/ -d dist/",
 		"watch": "babel -w src/ -d dist/",
 		"serve": "babel -w src/ -d dist/ | nodemon --watch dist"
@@ -21,7 +21,7 @@
 	"repository": "fupio/orion8",
 	"author": {
 		"name": "Mehmet Kose",
-		"email": "mehmetkose122@gmail.com",
+		"email": "mehmetkosedev@gmail.com",
 		"url": "https://github.com/mehmetkose"
 	},
 	"jest": {
