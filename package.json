@@ -8,11 +8,11 @@
 	"main": "dist/index.js",
 	"scripts": {
 		"test": "jest",
-		"server": "npm install && npm run build && nodemon dist/index.js --exec babel-node",
+		"server": "npm run build && nodemon dist/index.js --exec babel-node",
 		"heroku-postbuild": "npm install",
 		"deploy": "npm run build && git push heroku master && npm run tail",
 		"tail": "heroku logs --tail",
-		"start": "npm install && npm run build && babel-node dist/",
+		"start": "npm run build && babel-node dist/",
 		"build": "babel src/ -d dist/",
 		"watch": "babel -w src/ -d dist/",
 		"serve": "babel -w src/ -d dist/ | nodemon --watch dist"
